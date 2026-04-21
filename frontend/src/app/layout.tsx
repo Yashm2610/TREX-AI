@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   }
 };
 
+import { AuthProvider } from "@/components/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased min-h-screen bg-white">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

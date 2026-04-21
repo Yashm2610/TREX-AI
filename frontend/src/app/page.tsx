@@ -6,6 +6,8 @@ import HexGridBackground from "@/components/HexGridBackground";
 import CursorRipple from "@/components/CursorRipple";
 import AmbientEffects from "@/components/AmbientEffects";
 import FloatingAnalytics from "@/components/FloatingAnalytics";
+import { useAuth } from "@/components/AuthContext";
+import AuthModal from "@/components/AuthModal";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -22,12 +24,16 @@ const staggerContainer = {
 };
 
 export default function Home() {
+  const { user, logout } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
+
   return (
     <div className="relative min-h-screen flex flex-col font-sans text-gray-900 selection:bg-blue-200">
       <HexGridBackground />
       <AmbientEffects />
       <CursorRipple />
       <FloatingAnalytics />
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
 
       {/* Navigation Bar */}
       <nav className="fixed top-0 w-full z-50 glass-nav px-6 md:px-12 py-4 flex justify-between items-center transition-all duration-300">
@@ -38,10 +44,28 @@ export default function Home() {
           <a href="#why" className="hover:text-blue-600 transition-colors duration-300">WHY WE EXIST</a>
           <a href="#goal" className="hover:text-blue-600 transition-colors duration-300">GOAL</a>
         </div>
-        <div className="flex gap-4">
-          <button className="btn-premium px-6 py-2.5 rounded-full text-sm font-medium">
-            Experience T.R.E.X
-          </button>
+        <div className="flex gap-4 items-center">
+          {user ? (
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end hidden sm:flex">
+                <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Member</span>
+                <span className="text-sm font-bold text-black">{user.displayName?.split(' ')[0]}</span>
+              </div>
+              <button 
+                onClick={logout}
+                className="px-6 py-2.5 rounded-full text-sm font-medium border border-black/10 hover:bg-black/5 transition-all"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setIsAuthModalOpen(true)}
+              className="btn-premium px-6 py-2.5 rounded-full text-sm font-medium"
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </nav>
 
