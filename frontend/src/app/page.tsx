@@ -17,10 +17,11 @@ export default function Home() {
           <a href="#goal" className="hover:text-black transition">GOAL</a>
         </div>
         <div className="flex gap-4">
-
-          <button className="btn-premium px-6 py-2.5 rounded-full text-sm font-medium">
-            Experience T.R.E.X
-          </button>
+          <Link href="/login">
+            <button className="btn-premium px-6 py-2.5 rounded-full text-sm font-medium border border-blue-500/30">
+              Login
+            </button>
+          </Link>
         </div>
       </nav>
 
