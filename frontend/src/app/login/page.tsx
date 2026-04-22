@@ -3,14 +3,17 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import HexGridBackground from "@/components/HexGridBackground";
+import { useAuth } from "@/components/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
+  const { loginWithEmail } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -21,18 +24,31 @@ export default function Login() {
       return;
     }
 
-    // Validation: Hard password (at least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character)
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      setError(
-        "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
-      );
+    // Validation: Password minimum 6 chars (Firebase minimum)
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
       return;
     }
 
-    // Success logic: Set 'auth' cookie and redirect to Home
-    document.cookie = "auth=true; path=/; max-age=3600"; // 1 hour expiration
-    router.push("/");
+    setSubmitting(true);
+    try {
+      await loginWithEmail(email, password);
+      // Firebase auth state is now set — ProtectedRoute will read it
+      router.push("/city");
+    } catch (err: any) {
+      const code = err?.code || "";
+      if (code === "auth/user-not-found" || code === "auth/invalid-credential") {
+        setError("Account not found. Check your email or sign up first.");
+      } else if (code === "auth/wrong-password") {
+        setError("Incorrect password. Please try again.");
+      } else if (code === "auth/too-many-requests") {
+        setError("Too many attempts. Please wait a moment and try again.");
+      } else {
+        setError(err?.message || "Login failed. Please try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -40,7 +56,7 @@ export default function Login() {
       <HexGridBackground />
 
       <nav className="fixed top-0 w-full z-50 px-6 py-4 flex justify-start items-center">
-        <div 
+        <div
           className="text-2xl font-bold tracking-tighter text-black cursor-pointer"
           onClick={() => router.push("/")}
         >
@@ -88,9 +104,10 @@ export default function Login() {
 
           <button
             type="submit"
-            className="mt-4 btn-premium w-full py-3.5 rounded-xl text-lg font-medium shadow-xl shadow-black/10 hover:-translate-y-0.5 transition-transform"
+            disabled={submitting}
+            className="mt-4 btn-premium w-full py-3.5 rounded-xl text-lg font-medium shadow-xl shadow-black/10 hover:-translate-y-0.5 transition-transform disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Authenticate
+            {submitting ? "Signing in..." : "Authenticate"}
           </button>
         </form>
       </main>
