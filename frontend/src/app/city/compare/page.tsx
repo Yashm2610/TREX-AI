@@ -467,10 +467,10 @@ function ComparePage() {
                   {/* Salary Breakdown */}
                   {aiAnalysis.salary_analysis && hasSalary && (
                     <Section title="Institutional Salary Analytics" icon={<Zap className="w-5 h-5" />}>
-                      <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] mb-12 flex items-center gap-4">
+                      <div className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] mb-12 flex items-center gap-4">
                          <div className="w-12 h-[2px] bg-blue-500"></div>
                          {aiAnalysis.salary_analysis.headline}
-                      </p>
+                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                         {([
                           { name: city1, b: aiAnalysis.salary_analysis.city1_breakdown, color: "blue" },
@@ -685,15 +685,15 @@ function ComparePage() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-10 border-t border-gray-100">
                         <div className="bg-blue-50/40 rounded-[2rem] p-8 border border-blue-50 shadow-sm group hover:shadow-xl transition-shadow">
-                          <p className="text-[10px] text-blue-500 uppercase font-black tracking-[0.3em] mb-4 flex items-center gap-3">
+                          <div className="text-[10px] text-blue-500 uppercase font-black tracking-[0.3em] mb-4 flex items-center gap-3">
                              <Activity className="w-4 h-4" /> Fitness & Wellness
-                          </p>
+                          </div>
                           <p className="text-base text-blue-950 font-bold leading-relaxed italic opacity-90 group-hover:opacity-100 transition-opacity">"{aiAnalysis.lifestyle_comparison.gym_diff}"</p>
                         </div>
                         <div className="bg-indigo-50/40 rounded-[2rem] p-8 border border-indigo-50 shadow-sm group hover:shadow-xl transition-shadow">
-                          <p className="text-[10px] text-indigo-500 uppercase font-black tracking-[0.3em] mb-4 flex items-center gap-3">
+                          <div className="text-[10px] text-indigo-500 uppercase font-black tracking-[0.3em] mb-4 flex items-center gap-3">
                              <Heart className="w-4 h-4" /> Social & Leisure
-                          </p>
+                          </div>
                           <p className="text-base text-indigo-950 font-bold leading-relaxed italic opacity-90 group-hover:opacity-100 transition-opacity">"{aiAnalysis.lifestyle_comparison.entertainment_diff}"</p>
                         </div>
                       </div>
