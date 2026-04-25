@@ -28,19 +28,20 @@ The UI provides a glassy, transparent interface to view:
 ![City Stress Scores](./resourcess/citycost2.png)
 *Figure 2: Visualizing Stress scores and Transport Quality across different regions.*
 
-### 📄 Semantic Resume AI
-Moving beyond keyword stuffing, our Resume AI uses Large Language Models to interpret the *meaning* of your experience. It scans for "Quantified Impact" – did you just "manage a team" or did you "Increase team efficiency by 30% using Agile methodologies"?
+### 📄 Semantic Resume AI (Senior Grade)
+Moving beyond keyword stuffing, our Resume AI acts as a **Senior Technical Recruiter + Engineering Manager**. It doesn't just scan for words; it interprets the *meaning* and *impact* of your experience.
 
 ![Resume Optimizer](./resourcess/ATS%20resume%20optimizer.png)
 *Figure 3: High-fidelity upload interface with real-time PDF parsing stats.*
 
-The Resume optimizer checks for:
-- **ATS Compliance**: Font, spacing, and structured headers.
-- **Semantic Alignment**: How well your skills match the JD context.
-- **Action Verbs**: Ensuring your resume sounds professional and proactive.
+**Core Upgrades:**
+- **Brutal Honesty**: No more vague praise. The AI identifies specific architectural gaps and weak phrasing.
+- **Technical Depth**: Inspects projects for data flow, scalability, and measurable outcomes.
+- **Ordered Roadmap**: Provides a step-by-step learning path for identified skill gaps.
+- **Strategic Advice**: Suggests target companies and role seniority based on current readiness.
 
 ![Resume AI Output](./resourcess/atsreusmeouput.png)
-*Figure 4: AI-generated suggestions, missing keywords, and section-by-section scoring.*
+*Figure 4: AI-generated senior-level report with multi-card structure and severity indicators.*
 
 ###  Career Matchmaker (Experimental)
 A developmental module focused on long-term career trajectories and internship alignment. This module is currently in active development.
@@ -53,41 +54,43 @@ A developmental module focused on long-term career trajectories and internship a
 ## 03. Technical Architecture
 
 ### High-Level System Design
-T.R.E.X follows a decoupled micro-service-oriented architecture (monolithic implementation for early beta) to ensure scalability and ease of deployment.
+T.R.E.X follows a decoupled micro-service-oriented architecture designed for high-throughput AI inference.
 
-- **Frontend (Next.js 15)**: The presentation layer. Uses Server-Side Rendering (SSR) where possible for performance and Client-Side dynamic components (Framer Motion) for interactivity.
-- **API Gateway (FastAPI)**: A high-performance Python framework that handles validation, rate-limiting, and routing.
+- **Frontend (Next.js 15)**: The presentation layer. Uses a **Multi-Card Reporting Engine** with severity-based logic.
+- **API Gateway (FastAPI)**: Handles validation, entity extraction, and JD preprocessing.
 - **Core Processing Pipeline**:
-    - `Resume Parser`: Extracts text from binary streams.
-    - `Feature Extractor`: Identifies entities and sections.
-    - `Logic Evaluator`: Applies the scoring algorithms.
-- **AI Backend (LangChain)**: Orchestrates the LLM prompts and parses JSON-structured feedback.
+    - `Resume Parser`: Robust PDF text extraction + normalization.
+    - `Role Preprocessor`: Structured extraction of company/role metadata.
+    - `Regex Entity Extractor`: Captures contact info and social links.
+- **AI Backend (LangChain + Groq)**: Orchestrates the **Senior Persona** prompts and parses 8-card JSON responses.
 
 ---
 
 ## 04. Logic Deep-Dive: The Resume Pipeline
 
-### **Step 1: Robust Text Extraction**
-We use `pypdf` for low-level extraction and then pass the text through a normalization pipeline that handles redundant whitespaces, encoding issues, and special character sanitization.
-
+### **Step 1: Advanced Text Normalization**
+We handle broken line joins, inconsistent bullet points, and redundant whitespaces to ensure the LLM receives clean, structured data.
 ```python
 # app/services/resume_parser.py
 def normalize_text(text: str) -> str:
-    # Removes non-ascii, normalizes whitespace
-    text = re.sub(r'[^\x00-\x7f]', r' ', text)
-    text = re.sub(r'\s+', ' ', text)
+    # Fixes broken line joins like "Soft-\nware" -> "Software"
+    text = re.sub(r'(\w+)-\n\s*(\w+)', r'\1\2', text)
+    # Normalizes diverse bullet styles (•, ●, -, *) into a standard list format
+    text = re.sub(r'^[ \t]*[•●○▪■-][ \t]*', '- ', text, flags=re.MULTILINE)
     return text.strip()
 ```
 
-### **Step 2: Section Detection**
-T.R.E.X uses regular expression patterns to identify critical resume sections. We maintain a dictionary of over 200 synonyms for common sections like "Professional Summary", "Work History", and "Technical Proficiencies".
+### **Step 2: Regex Entity Extraction**
+Before the AI even sees the resume, our regex engine identifies critical metadata to ground the AI's reasoning.
+- **Contact Info**: Robust patterns for international phone formats and valid email schemas.
+- **Social Links**: Heuristics to detect LinkedIn profiles, GitHub repositories, and personal portfolios.
+- **Name Detection**: Heuristic analysis of the first 3 lines of the document.
 
-### **Step 3: ATS Keyword Matching**
-Unlike basic string matching, our matcher:
-- Converts all text to lowercase.
-- Trims whitespace.
-- Handles pluralization (e.g., "Python" matches "Pythonistas" in context if configured).
-- Filters out "stop words" from the JD to focus on core requirements.
+### **Step 3: Role Preprocessing (JD Parser)**
+We don't just pass the raw JD to the AI. We extract:
+- **Company Context**: Identifying the hiring organization via keyword proximity ("at", "join", "About").
+- **Seniority Tiers**: Detecting levels like "Junior", "Senior", "Lead", or "Staff".
+- **Skill Bucketing**: Separating "Requirements" from "Nice-to-haves" using header-pattern recognition.
 
 ### **Step 4: The 4-Way Scoring Engine**
 The final score is not arbitrary. It is a calculation of:
@@ -117,21 +120,21 @@ final_score = capped_savings_score + comfort_weighted - stress_penalty
 
 ---
 
-## 06. AI Integration & Prompt Engineering
+## 06. AI Integration & Prompt Engineering (The "Fine-Tuning")
 
-We utilize the **LangChain-Groq** framework for high-speed inference. Using the `llama-3.3-70b-versatile` model, we provide a sophisticated `SYSTEM_PROMPT` to guide the analysis.
+We utilize the **LangChain-Groq** framework for high-speed inference. Using the `llama-3.3-70b-versatile` model, we have "fine-tuned" the behavior through complex System Prompting and expanded context windows.
 
-### **Prompt Strategy**
-Our prompt instructs the AI to:
-1.  **Stop Rating**: The score is calculated by the Python engine; the AI provides *qualitative* nuances.
-2.  **Be Harsh**: Recruiters are busy; the AI must identify the weakest parts of the resume.
-3.  **Ensure JSON**: Output must be machine-readable for the frontend.
+### **The Senior Reviewer Persona**
+The AI is instructed to behave as a **Senior Technical Recruiter and Engineering Manager**.
+1.  **Stop Rating**: The numerical score is calculated by our Python engine; the AI provides *qualitative* nuance.
+2.  **Be Brutal**: It must point out exactly why a project sounds weak or why a tech stack is insufficient.
+3.  **Project Deep-Dive**: Analyzes the complexity, architecture, and impact of mentioned projects.
+4.  **Actionable JSON**: Returns an 8-card structured response including `overall_match`, `resume_weaknesses`, `roadmap`, and `application_strategy`.
 
-### **Resource Guardrails**
-Because LLMs are expensive and computationally heavy:
-- **Semaphore Guard**: Max 1 concurrent request.
-- **Timeout**: Killed after 25 seconds.
-- **Input Truncation**: Resume text is capped at 1500 chars to save tokens and speed up response.
+### **Technical Guardrails**
+- **Expanded Context**: We increased the context window to **8,000 characters for resumes** and **4,000 for JDs**, ensuring even long-form documents are fully understood.
+- **Severity Mapping**: Each AI card is tagged with a severity (`critical`, `major`, `moderate`, `minor`) which the frontend uses to color-code the report.
+- **Concurrency Control**: A semaphore limits LLM calls to 1 at a time per instance to prevent CPU starvation.
 
 ---
 
