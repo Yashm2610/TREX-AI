@@ -14,8 +14,8 @@ The name T.R.E.X stands for **Total Relocation & Employment eXpert**, symbolizin
 
 ## 02. Product Modules & Visuals
 
-###  City Intelligence (Cost Analyzer)
-The City Analyzer is more than a simple calculator. It is a financial forecasting engine that evaluates 10+ Indian tech hubs based on real-world cost vectors. It answers the "What is my take-home after expenses?" question with surgical precision.
+### 🏙️ City Intelligence (Dynamic Analysis Engine)
+The City Analyzer is a high-performance dynamic engine that evaluates 50+ Indian tech hubs based on real-time cost vectors. It has been upgraded from static JSON lookups to a dynamic analysis framework that answers the "What is my take-home after expenses?" question with surgical precision.
 
 ![City Cost Analyzer](./resourcess/citycostanalyzer.png)
 *Figure 1: Comparison of multiple cities based on salary, lifestyle, and sharing preferences.*
@@ -149,7 +149,7 @@ The AI is instructed to behave as a **Senior Technical Recruiter and Engineering
 *   **`app/services/scoring.py`**: The math engine for relocation.
 *   **`app/services/llm_feedback.py`**: LangChain orchestration.
 *   **`app/services/provider_router.py`**: Switch between Groq/OpenAI.
-*   **`app/data/cities.json`**: Static database of 12+ tech hubs.
+*   **`app/data/cities.json`**: Dynamic dataset of 54+ tech hubs with advanced scoring metrics.
 
 ### **Frontend (`/frontend`)**
 *   **`src/app/resume/page.tsx`**: Dynamic resume analyzer UI.
@@ -264,13 +264,14 @@ A: Ensure Safari version is 15+ for full support of `backdrop-filter: blur`.
 
 ### **Current: Beta 0.1**
 - [x] Basic AI Logic.
-- [x] Static Cities.
+- [x] Dynamic City Analysis (54+ Cities).
 - [x] PDF Extraction.
 
 ### **Next: Milestone 0.2**
 - [ ] Integration with External Career APIs.
 - [ ] OCR for scanned resumes.
 - [x] Client-side Authentication & Login Flow (Beta).
+- [ ] **OTP-based Secure Authentication System** (Future Implementation).
 
 ---
 
