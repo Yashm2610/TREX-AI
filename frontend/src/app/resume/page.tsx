@@ -117,6 +117,29 @@ export default function ResumeOptimizer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
+  // Builder Journey States
+  const [isBotOpen, setIsBotOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isCanvasOpen, setIsCanvasOpen] = useState(false);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+
+  const startBuildingJourney = async (data: any) => {
+    setIsChatOpen(false);
+    try {
+      const res = await fetch("http://localhost:8000/api/builder/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to initialize builder");
+      const { session_id } = await res.json();
+      setCurrentSessionId(session_id);
+      setIsCanvasOpen(true);
+    } catch (e) {
+      alert("Error starting builder session");
+    }
+  };
+
   const analyzeResume = async () => {
     setLoading(true);
     setError("");
@@ -175,22 +198,25 @@ export default function ResumeOptimizer() {
 
   return (
     <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col font-sans text-gray-900 selection:bg-orange-200">
+    {isCanvasOpen && currentSessionId ? (
+      <ResumeCanvas sessionId={currentSessionId} onBack={() => setIsCanvasOpen(false)} />
+    ) : (
+    <div className="relative min-h-screen flex flex-col trex-font-nunito text-gray-100 selection:bg-orange-500/30">
       {/* Background */}
-      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#fdfdfd]">
-        <div className="absolute top-[-10%] left-[10%] w-[50%] h-[600px] bg-gradient-to-br from-orange-100/80 to-amber-50/40 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[10%] w-[60%] h-[700px] bg-orange-100/40 rounded-full blur-[140px]" />
-        <div className="absolute top-[20%] right-[-5%] w-[40%] h-[500px] bg-red-100/30 rounded-full blur-[130px]" />
+      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#232228]">
+        <div className="absolute top-[-10%] left-[10%] w-[50%] h-[600px] bg-gradient-to-br from-orange-500/10 to-amber-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[10%] w-[60%] h-[700px] bg-blue-500/5 rounded-full blur-[140px]" />
+        <div className="absolute top-[20%] right-[-5%] w-[40%] h-[500px] bg-red-500/5 rounded-full blur-[130px]" />
       </div>
 
       {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 glass-nav px-6 md:px-12 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold tracking-tighter text-black">
+      <nav className="fixed top-0 w-full z-50 bg-[#151419]/80 backdrop-blur-xl px-6 md:px-12 py-4 flex justify-between items-center border-b border-white/5">
+        <Link href="/" className="text-2xl font-bold tracking-tighter text-white">
           trex<span className="text-orange-500">.ai</span>
         </Link>
-        <div className="hidden md:flex items-center gap-10 text-[13px] font-semibold text-gray-600 tracking-wide">
-          <Link href="/" className="hover:text-black transition">HOME</Link>
-          <span className="text-black border-b-2 border-orange-500 pb-0.5">RESUME AI</span>
+        <div className="hidden md:flex items-center gap-10 text-[13px] font-semibold text-gray-400 tracking-wide">
+          <Link href="/" className="hover:text-white transition">HOME</Link>
+          <span className="text-white border-b-2 border-orange-500 pb-0.5">RESUME AI</span>
         </div>
         <Link href="/">
           <button className="btn-premium px-6 py-2.5 rounded-full text-sm font-medium">
@@ -412,8 +438,8 @@ export default function ResumeOptimizer() {
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Sub Scores */}
               <Card className="glass md:col-span-2 shadow-sm border-gray-200">
@@ -516,8 +542,8 @@ export default function ResumeOptimizer() {
                        {analysis.missing_sections.length === 0 && <span className="text-xs text-green-600">Standard structure verified.</span>}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Matched Keywords */}
               <Card className="glass shadow-sm border-gray-200">
@@ -539,7 +565,7 @@ export default function ResumeOptimizer() {
               </Card>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Missing Keywords */}
               <Card className="glass shadow-sm border-gray-200">
                 <CardHeader>
@@ -576,8 +602,8 @@ export default function ResumeOptimizer() {
                       </li>
                     ))}
                   </ul>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -602,7 +628,16 @@ export default function ResumeOptimizer() {
           </div>
         )}
       </main>
+
+      {/* Builder Journey Components */}
+      <TrexBotIcon onClick={() => setIsChatOpen(true)} isOpen={isChatOpen} />
+      <ResumeChatbot 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+        onSubmit={startBuildingJourney} 
+      />
     </div>
+    )}
     </ProtectedRoute>
   );
 }
