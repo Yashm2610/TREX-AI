@@ -43,20 +43,6 @@ Moving beyond keyword stuffing, our Resume AI acts as a **Senior Technical Recru
 ![Resume AI Output](./resourcess/atsreusmeouput.png)
 *Figure 4: AI-generated senior-level report with multi-card structure and severity indicators.*
 
-### 🤖 TREX AI Chatbot (Guided Resume Builder)
-The Chatbot is our newest flagship feature, designed to eliminate the "blank page syndrome" and the frustration of manual resume forms.
-
-**The Workflow:**
-1. **Interactive Intake**: Instead of a long form, you chat with TREX. It asks about your name, experience, and projects step-by-step.
-2. **Raw to Polished**: You provide raw information (e.g., *"I did some Python work at a startup"*). TREX doesn't just copy it—it **analyzes, expands, and polishes** it into high-impact, ATS-optimized bullet points.
-3. **Live Building Canvas**: Once the chat is done, you are redirected to a professional canvas. You can watch as TREX builds your resume section-by-section in real-time.
-4. **Instant Refinement**: Don't like a section? Use the **"Edit with AI"** wand to refine it with a simple instruction like *"Make this more technical"* or *"Add more metrics"*.
-
-**Why it's a Game Changer:**
-- **Zero Friction**: Filling out 20+ fields in a traditional builder is hectic and exhausting. Chatting is natural and low-effort.
-- **Expert Phrasing**: Most candidates struggle to highlight their achievements. TREX uses a **Senior Engineering Manager persona** to ensure your bullets sound authoritative and results-oriented.
-- **Staged Pipeline**: Our AI pipeline handles the heavy lifting of keyword alignment, summary synthesis, and skill grouping automatically.
-
 ###  Career Matchmaker (Experimental)
 A developmental module focused on long-term career trajectories and internship alignment. This module is currently in active development.
 
