@@ -1,4 +1,6 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
+from typing import Any
+
 from fastapi.responses import StreamingResponse
 from app.schemas.builder import ResumeData
 from app.services.resume_builder import ResumeBuilder
