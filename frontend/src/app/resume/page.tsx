@@ -7,6 +7,10 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, AlertCircle, TrendingUp, Info, MoreVertical, UploadCloud, FileText, UserCheck, Sparkles, Search, Layers, Zap } from "lucide-react";
+import TrexBotIcon from "@/components/TrexBotIcon";
+import ResumeChatbot from "@/components/ResumeChatbot";
+import ResumeCanvas from "@/app/resume/builder/ResumeCanvas";
+
 
 interface ActionItem {
   label: string;
@@ -15,7 +19,7 @@ interface ActionItem {
 
 interface AICard {
   title: string;
-  severity: "critical" | "major" | "moderate" | "minor";
+  severity: 'critical' | 'major' | 'moderate' | 'minor';
   details: string;
   action_items: ActionItem[];
 }
@@ -53,23 +57,25 @@ function AICardComponent({ card }: { card: AICard }) {
     minor: { color: "bg-blue-500", label: "MINOR", progress: "w-1/4" },
   };
 
-  const badgeColors = {
-    critical: "bg-red-500 text-white",
-    major: "bg-orange-500 text-white",
-    moderate: "bg-amber-500 text-white",
-    minor: "bg-blue-500 text-white",
-  };
+  const config = severityMap[card.severity] || severityMap.moderate;
 
   return (
-    <Card className={`glass shadow-md border ${severityColors[card.severity]}`}>
-      <CardHeader className="pb-2">
+    <div className="group relative bg-[#0f172a] border border-slate-800 rounded-2xl overflow-hidden transition-all duration-300 hover:border-slate-700 hover:shadow-2xl hover:shadow-orange-500/10 hover:-translate-y-1">
+      {/* Top Progress Bar (Severity Impact) */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-slate-800/50">
+        <div className={`h-full ${config.color} transition-all duration-500 ${config.progress}`}></div>
+      </div>
+
+      <div className="p-6 space-y-4">
+        {/* Header: Title & Subtitle mapping */}
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-bold">{card.title}</CardTitle>
-          <span
-            className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${badgeColors[card.severity]}`}
-          >
-            {card.severity}
-          </span>
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">AI Assessment Category</span>
+            <h3 className="text-lg font-bold text-white tracking-tight leading-tight">{card.title}</h3>
+          </div>
+          <button className="text-slate-500 hover:text-white transition-colors p-1" title="Options">
+            <MoreVertical className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Details Mapping */}
@@ -115,6 +121,29 @@ export default function ResumeOptimizer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
+  // Builder Journey States
+  const [isBotOpen, setIsBotOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isCanvasOpen, setIsCanvasOpen] = useState(false);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+
+  const startBuildingJourney = async (data: any) => {
+    setIsChatOpen(false);
+    try {
+      const res = await fetch("http://localhost:8000/api/builder/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to initialize builder");
+      const { session_id } = await res.json();
+      setCurrentSessionId(session_id);
+      setIsCanvasOpen(true);
+    } catch (e) {
+      alert("Error starting builder session");
+    }
+  };
+
   const analyzeResume = async () => {
     setLoading(true);
     setError("");
@@ -146,6 +175,7 @@ export default function ResumeOptimizer() {
 
       const data: AnalysisResult = await res.json();
       setAnalysis(data);
+
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : "An error occurred";
       setError(errorMsg);
@@ -155,10 +185,7 @@ export default function ResumeOptimizer() {
       // Auto-scroll to results if analysis succeeded
       setTimeout(() => {
         if (!error && !loading) {
-          window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: "smooth",
-          });
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
       }, 100);
     }
@@ -169,15 +196,19 @@ export default function ResumeOptimizer() {
     setJobDescription("");
     setAnalysis(null);
     setError("");
-    const fileInput = document.getElementById(
-      "resume-upload",
-    ) as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
+    const fileInput = document.getElementById('resume-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   };
 
   return (
     <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col font-sans text-gray-900 selection:bg-orange-200">
+      {isCanvasOpen && currentSessionId ? (
+        <ResumeCanvas
+          sessionId={currentSessionId}
+          onBack={() => setIsCanvasOpen(false)}
+        />
+      ) : (
+        <div className="relative min-h-screen flex flex-col font-sans text-gray-900 selection:bg-orange-200">
       {/* Background */}
       <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#fdfdfd]">
         <div className="absolute top-[-10%] left-[10%] w-[50%] h-[600px] bg-gradient-to-br from-orange-100/80 to-amber-50/40 rounded-full blur-[120px]" />
@@ -209,149 +240,137 @@ export default function ResumeOptimizer() {
             <Sparkles className="w-3 h-3" />
             AI RECRUITER MODE
           </div>
-
-          {/* Nav */}
-          <nav className="fixed top-0 w-full z-50 bg-[#151419]/80 backdrop-blur-xl px-6 md:px-12 py-4 flex justify-between items-center border-b border-white/5">
-            <Link
-              href="/"
-              className="text-2xl font-bold tracking-tighter text-white"
-            >
-              trex<span className="text-orange-500">.ai</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-10 text-[13px] font-semibold text-gray-400 tracking-wide">
-              <Link href="/" className="hover:text-white transition">
-                HOME
-              </Link>
-              <span className="text-white border-b-2 border-orange-500 pb-0.5">
-                RESUME AI
-              </span>
+          <h1 className="text-5xl font-extrabold tracking-tight text-gray-900">Senior AI Resume Review</h1>
+          <p className="text-gray-500 text-lg max-w-2xl leading-relaxed">
+            Our neural-pipeline simulates a high-pressure engineering manager interview. Upload your resume and JD for a brutal, honest, and strategic assessment.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 pt-6">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm text-xs font-bold text-gray-600">
+               <Search className="w-4 h-4 text-orange-500" />
+               ATS SCAN
             </div>
-            <Link href="/">
-              <button className="btn-premium px-6 py-2.5 rounded-full text-sm font-medium">
-                Back to Home
-              </button>
-            </Link>
-          </nav>
-
-          {/* Page Content */}
-          <main className="flex-1 max-w-6xl mx-auto w-full pt-36 px-6 pb-20 space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight mb-3 text-gray-900">
-                Senior AI Resume Review
-              </h1>
-              <p className="text-gray-500 text-lg">
-                Expert-level analysis driven by a sharp Senior HR + Technical
-                persona.
-              </p>
+            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm text-xs font-bold text-gray-600">
+               <Layers className="w-4 h-4 text-blue-500" />
+               JD MATCH
             </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm text-xs font-bold text-gray-600">
+               <UserCheck className="w-4 h-4 text-green-500" />
+               SENIOR HR REVIEW
+            </div>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Input Section */}
-              <Card className="glass shadow-xl shadow-gray-200/50 h-fit">
-                <CardHeader>
-                  <CardTitle>Your Resume (PDF)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-md bg-white hover:bg-gray-50 transition p-4">
-                    <input
-                      id="resume-upload"
-                      type="file"
-                      accept="application/pdf"
-                      onChange={(e) =>
-                        setResumeFile(e.target.files?.[0] || null)
-                      }
-                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
-                    />
-                    {!resumeFile && (
-                      <p className="text-xs text-gray-400 mt-4 text-center">
-                        Only PDFs up to 5MB supported.
-                      </p>
-                    )}
-                    {resumeFile && (
-                      <p className="text-sm font-semibold text-green-600 mt-4">
-                        Selected: {resumeFile.name}
-                      </p>
-                    )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Input Section - Resume Upload */}
+          <Card className="glass shadow-xl shadow-gray-200/50 h-fit border-white/40 overflow-hidden">
+            <CardHeader className="pb-2 border-b border-gray-100/50 bg-gray-50/30">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-orange-500" />
+                Resume Document
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-8 space-y-6">
+              <div 
+                className={`group relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-2xl transition-all duration-300 bg-white/50
+                  ${resumeFile ? 'border-orange-500 bg-orange-50/30 shadow-inner' : 'border-gray-200 hover:border-orange-400 hover:bg-orange-50/10'}`}
+              >
+                <input
+                  id="resume-upload"
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  aria-label="Upload PDF Resume"
+                />
+                
+                {!resumeFile ? (
+                  <div className="flex flex-col items-center text-center p-6 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 group-hover:scale-110 transition-transform duration-300">
+                       <UploadCloud className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-800 uppercase tracking-wide">Drag & Drop Resume</p>
+                      <p className="text-xs text-gray-400 mt-1">or click to browse from files</p>
+                    </div>
+                    <div className="pt-4">
+                      <span className="text-[10px] font-bold px-2 py-1 bg-gray-100 text-gray-500 rounded border border-gray-200 tracking-tighter">PDF ONLY • MAX 5MB</span>
+                    </div>
                   </div>
-
-                  <div className="flex items-center gap-2 pt-2">
-                    <input
-                      type="checkbox"
-                      id="use-ai"
-                      checked={useAI}
-                      onChange={(e) => setUseAI(e.target.checked)}
-                      className="w-4 h-4 text-orange-600 accent-orange-500 rounded focus:ring-orange-500"
-                    />
-                    <label
-                      htmlFor="use-ai"
-                      className="text-sm text-gray-700 font-medium cursor-pointer"
+                ) : (
+                  <div className="flex flex-col items-center text-center p-6 space-y-4 animate-in zoom-in-95 duration-300">
+                    <div className="w-20 h-24 bg-white rounded-lg border-2 border-orange-500 shadow-xl shadow-orange-500/10 flex items-center justify-center relative overflow-hidden">
+                       <div className="absolute top-0 left-0 w-full h-2 bg-orange-500"></div>
+                       <FileText className="w-10 h-10 text-orange-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-bold text-gray-800 line-clamp-1 px-4">{resumeFile.name}</p>
+                      <p className="text-[10px] text-green-600 font-bold uppercase tracking-widest">Ready for analysis</p>
+                    </div>
+                    <button 
+                       onClick={(e) => { e.stopPropagation(); setResumeFile(null); }}
+                       className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest z-20"
                     >
-                      Enable Senior AI Review (Detailed & Honest)
-                    </label>
+                      Remove File
+                    </button>
                   </div>
-                </CardContent>
-              </Card>
+                )}
+              </div>
 
-              <Card className="glass shadow-xl shadow-gray-200/50 h-fit">
-                <CardHeader>
-                  <CardTitle>Job Description</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <textarea
-                    value={jobDescription}
-                    onChange={(e) => setJobDescription(e.target.value)}
-                    placeholder="Paste the target job description here..."
-                    className="w-full h-64 bg-white border border-gray-200 rounded-md p-4 text-gray-900 focus:ring-2 focus:ring-orange-500 outline-none shadow-sm transition-all resize-none"
-                    aria-label="Job description"
-                  />
-                  <p className="text-xs text-gray-400">
-                    Tip: Include the full description for better role-alignment
-                    extraction.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+              <div className="flex items-center gap-3 pt-2">
+                <input 
+                  type="checkbox" 
+                  id="use-ai" 
+                  checked={useAI} 
+                  onChange={(e) => setUseAI(e.target.checked)}
+                  className="w-4 h-4 text-orange-600 accent-orange-500 rounded focus:ring-orange-500 transition-colors"
+                />
+                <label htmlFor="use-ai" className="text-[10px] text-gray-400 font-bold uppercase tracking-widest cursor-pointer hover:text-orange-600 transition-colors">
+                  Enable Neural Senior Persona Review
+                </label>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* How Analysis Works Strip */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-10 border-y border-gray-100/50">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-sm">
-                  1
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-gray-800 uppercase tracking-widest leading-none mb-1">
-                    Upload Resume
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-medium">
-                    PDF format, max 5MB
-                  </p>
+          {/* Input Section - Job Description */}
+          <Card className="glass shadow-xl shadow-gray-200/50 h-fit border-white/40 overflow-hidden">
+            <CardHeader className="pb-2 border-b border-gray-100/50 bg-gray-50/30">
+              <CardTitle className="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-blue-500" />
+                Job Description
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-8 space-y-6">
+              <div className="relative group">
+                <textarea
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  placeholder="Paste the target JD here (Requirements, Skills, Responsibilities)..."
+                  className="w-full h-64 bg-white/50 border border-gray-200 rounded-2xl p-6 text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 outline-none shadow-sm transition-all resize-none placeholder:text-gray-300 text-sm leading-relaxed"
+                  aria-label="Job description"
+                />
+                <div className="absolute bottom-4 right-4 flex items-center gap-2 pointer-events-none">
+                  <span className={`text-[10px] font-bold px-2 py-1 rounded bg-gray-100/80 backdrop-blur-sm ${jobDescription.length > 500 ? 'text-green-600' : 'text-gray-400'}`}>
+                    {jobDescription.length} CHARS
+                  </span>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
-                  2
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-gray-800 uppercase tracking-widest leading-none mb-1">
-                    Paste Job Desc
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-medium">
-                    Requirements & Skills
-                  </p>
-                </div>
+              <div className="flex items-center gap-2 px-2">
+                <Info className="w-3 h-3 text-blue-400" />
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                  Paste the full text for deeper semantic matching.
+                </p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-sm">
-                  3
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-gray-800 uppercase tracking-widest leading-none mb-1">
-                    AI Assessor Report
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-medium">
-                    8-card technical analysis
-                  </p>
-                </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* How Analysis Works Strip */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-10 border-y border-gray-100/50">
+           <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-sm">1</div>
+              <div>
+                <p className="text-xs font-bold text-gray-800 uppercase tracking-widest leading-none mb-1">Upload Resume</p>
+                <p className="text-[10px] text-gray-400 font-medium">PDF format, max 5MB</p>
               </div>
            </div>
            <div className="flex items-center gap-4">
@@ -413,36 +432,21 @@ export default function ResumeOptimizer() {
                         <circle
                           cx="50"
                           cy="50"
-                          r="42"
+                          r="40"
                           fill="none"
-                          stroke="#222"
-                          strokeWidth="6"
-                        />
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="42"
-                          fill="none"
-                          stroke={
-                            analysis.overall_score >= 80
-                              ? "#22c55e"
-                              : analysis.overall_score >= 60
-                                ? "#f97316"
-                                : "#ef4444"
-                          }
-                          strokeWidth="6"
-                          strokeDasharray={`${(analysis.overall_score / 100) * 263.8} 263.8`}
+                          stroke={analysis.overall_score >= 80 ? "#22c55e" : analysis.overall_score >= 60 ? "#f97316" : "#ef4444"}
+                          strokeWidth="8"
+                          strokeDasharray={`${(analysis.overall_score / 100) * 251.2} 251.2`}
                           strokeLinecap="round"
-                          className="transition-all duration-1000 ease-out"
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center flex-col">
-                        <span className="text-4xl font-bold text-white tracking-tighter">
-                          {analysis.overall_score}%
-                        </span>
+                        <span className="text-3xl font-bold text-gray-800">{analysis.overall_score}%</span>
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
               {/* Sub Scores */}
               <Card className="glass md:col-span-2 shadow-sm border-gray-200">
@@ -631,7 +635,19 @@ export default function ResumeOptimizer() {
           </div>
         )}
       </main>
+
+      {/* Builder Journey Components */}
+      <TrexBotIcon
+        onClick={() => setIsChatOpen(true)}
+        isOpen={isChatOpen}
+      />
+      <ResumeChatbot
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        onSubmit={startBuildingJourney}
+      />
     </div>
+    )}
     </ProtectedRoute>
   );
 }
