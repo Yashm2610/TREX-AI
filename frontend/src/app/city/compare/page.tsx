@@ -537,10 +537,10 @@ function ComparePage() {
                           { city: city2, pros: aiAnalysis.benefits.city2_pros, cons: aiAnalysis.benefits.city2_cons, color: "slate" },
                         ].map(({ city, pros, cons, color }) => (
                           <div key={city}>
-                            <p className={`font-black text-xl text-${color}-950 mb-8 tracking-tighter flex items-center gap-3`}>
+                            <h3 className={`font-black text-xl text-${color}-950 mb-8 tracking-tighter flex items-center gap-3`}>
                                <div className={`w-2 h-2 rounded-full bg-${color}-500 shadow-[0_0_8px_rgba(0,0,0,0.1)]`}></div>
                                {city}
-                            </p>
+                            </h3>
                             <div className="space-y-4 mb-8">
                               {pros?.map((p, i) => (
                                 <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100/50 group hover:bg-emerald-50 transition-colors">

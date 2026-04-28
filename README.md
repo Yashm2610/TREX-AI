@@ -28,6 +28,12 @@ The UI provides a glassy, transparent interface to view:
 ![City Stress Scores](./resourcess/citycost2.png)
 *Figure 2: Visualizing Stress scores and Transport Quality across different regions.*
 
+### 🏗️ AI Resume Builder
+A dynamic resume generation engine that automatically crafts and enriches your professional profile.
+- **GitHub Enrichment**: Automatically pulls project descriptions and tech stacks from provided GitHub URLs.
+- **Streaming Generation**: Watch your resume get built and polished in real-time.
+- **AI Iterative Edits**: Refine specific sections (like Experience or Summary) with custom instructions until perfect.
+
 ### 📄 Semantic Resume AI (Senior Grade)
 Moving beyond keyword stuffing, our Resume AI acts as a **Senior Technical Recruiter + Engineering Manager**. It doesn't just scan for words; it interprets the *meaning* and *impact* of your experience.
 
@@ -144,7 +150,10 @@ The AI is instructed to behave as a **Senior Technical Recruiter and Engineering
 *   **`main.py`**: Configures FastAPI and mounts routes.
 *   **`app/api/routes/resume.py`**: The main entry for file uploads.
 *   **`app/api/routes/city.py`**: Handlers for city list and comparison.
+*   **`app/api/routes/builder.py`**: API routes for streaming AI resume generation and iterative editing.
 *   **`app/services/resume_parser.py`**: PDF processing logic.
+*   **`app/services/resume_builder.py`**: Core AI logic for creating and polishing resume content.
+*   **`app/services/github_enricher.py`**: Integration for enriching project data from GitHub URLs.
 *   **`app/services/ats_checks.py`**: Rule-based screening.
 *   **`app/services/scoring.py`**: The math engine for relocation.
 *   **`app/services/llm_feedback.py`**: LangChain orchestration.
@@ -153,8 +162,10 @@ The AI is instructed to behave as a **Senior Technical Recruiter and Engineering
 
 ### **Frontend (`/frontend`)**
 *   **`src/app/resume/page.tsx`**: Dynamic resume analyzer UI.
-*   **`src/app/city/page.tsx`**: City comparison dashboard.
+*   **`src/app/city/page.tsx`**: Main city listing and search dashboard.
+*   **`src/app/city/[cityName]/page.tsx`**: Dynamic individual city details and comparison views.
 *   **`src/app/career/page.tsx`**: Experimental career tools.
+*   **`src/app/login/page.tsx`** & **`src/app/register/page.tsx`**: Client-side authentication flows.
 *   **`src/components/ui/card.tsx`**: Reusable Glassmorphism cards.
 *   **`src/lib/utils.ts`**: Tailwind specific helpers.
 *   **`tailwind.config.ts`**: Defines the project-wide design tokens.
