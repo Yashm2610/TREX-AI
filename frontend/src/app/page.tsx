@@ -41,6 +41,7 @@ export default function Home() {
         <div className="hidden md:flex items-center gap-12 text-[12px] font-bold text-gray-800 drop-shadow-sm tracking-[0.2em]">
           <a href="#why" className="hover:text-blue-600 transition-colors duration-300">WHY WE EXIST</a>
           <a href="#goal" className="hover:text-blue-600 transition-colors duration-300">GOAL</a>
+          {user && <Link href="/my-resumes" className="hover:text-blue-600 transition-colors duration-300">MY RESUMES</Link>}
         </div>
         <div className="flex gap-4 items-center">
           {user ? (

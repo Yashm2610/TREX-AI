@@ -10,6 +10,9 @@ import { CheckCircle2, AlertCircle, TrendingUp, Info, MoreVertical, UploadCloud,
 import TrexBotIcon from "@/components/TrexBotIcon";
 import ResumeChatbot from "@/components/ResumeChatbot";
 import ResumeCanvas from "@/app/resume/builder/ResumeCanvas";
+import { useAuth } from "@/components/AuthContext";
+import { db } from "@/lib/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 
 interface ActionItem {
@@ -120,6 +123,8 @@ export default function ResumeOptimizer() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const { user } = useAuth();
 
   // Builder Journey States
   const [isBotOpen, setIsBotOpen] = useState(false);
@@ -148,6 +153,7 @@ export default function ResumeOptimizer() {
     setLoading(true);
     setError("");
     setAnalysis(null);
+    setShowLoginPrompt(false);
 
     try {
       if (!resumeFile) {
@@ -175,6 +181,26 @@ export default function ResumeOptimizer() {
 
       const data: AnalysisResult = await res.json();
       setAnalysis(data);
+
+      if (user) {
+        // Run in background so it doesn't block the UI loading state
+        (async () => {
+          try {
+            const resumeId = crypto.randomUUID();
+            await setDoc(doc(db, "users", user.uid, "resumes", resumeId), {
+              fileName: resumeFile.name,
+              uploadedAt: serverTimestamp(),
+              jobDescription,
+              analysisResult: data,
+              overallScore: data.overall_score
+            });
+          } catch (saveError) {
+            console.error("Error saving resume:", saveError);
+          }
+        })();
+      } else {
+        setShowLoginPrompt(true);
+      }
 
     } catch (e) {
       const errorMsg = e instanceof Error ? e.message : "An error occurred";
@@ -415,6 +441,15 @@ export default function ResumeOptimizer() {
             Clear All
           </Button>
         </div>
+
+        {showLoginPrompt && (
+          <div className="flex justify-center -mt-2 mb-4 animate-in fade-in zoom-in duration-300">
+            <div className="bg-orange-50 border border-orange-200 text-orange-800 text-sm font-semibold px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
+              <Info className="w-4 h-4 text-orange-500" />
+              Login to save this resume analysis.
+            </div>
+          </div>
+        )}
 
         {/* Analysis Results */}
         {analysis && (
