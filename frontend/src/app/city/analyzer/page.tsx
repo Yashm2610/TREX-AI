@@ -146,7 +146,7 @@ function ComparePage() {
       setLoadingData(false);
 
       router.replace(
-        `/city/compare?city1=${encodeURIComponent(city1)}&city2=${encodeURIComponent(city2)}&salary=${salary}`,
+        `/city/analyzer?city1=${encodeURIComponent(city1)}&city2=${encodeURIComponent(city2)}&salary=${salary}`,
         { scroll: false }
       );
 

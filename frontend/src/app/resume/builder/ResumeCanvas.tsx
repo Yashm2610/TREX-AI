@@ -74,7 +74,7 @@ const ResumeCanvas: React.FC<ResumeCanvasProps> = ({ sessionId, onBack }) => {
     window.print();
   };
 
-  const handleAIEdit = async (sectionType: string, content: Any) => {
+  const handleAIEdit = async (sectionType: string, content: any) => {
     if (!aiInstruction.trim()) return;
     setIsRefining(true);
     try {

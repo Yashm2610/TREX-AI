@@ -39,7 +39,7 @@ interface AIFeedback {
 
 interface AnalysisResult {
   overall_score: number;
-  section_scores: SectionScores;
+  section_scores: Record<string, number>;
   matched_keywords: string[];
   missing_keywords: string[];
   detected_sections: string[];
