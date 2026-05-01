@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAEtT0dbjTKRayKTYpvOuV6hFhjEAjIo-M",
@@ -12,13 +13,11 @@ const firebaseConfig = {
   measurementId: "G-VH3TQTT2XS"
 };
 
-// Initialize Firebase
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 
-// Analytics is only supported in browser
-let analytics;
-if (typeof window !== 'undefined') {
+let analytics: any = null;
+if (typeof window !== "undefined") {
   isSupported().then((supported) => {
     if (supported) {
       analytics = getAnalytics(app);
@@ -26,4 +25,6 @@ if (typeof window !== 'undefined') {
   });
 }
 
-export { app, auth, analytics };
+const db = getFirestore(app);
+
+export { app, auth, analytics, db };

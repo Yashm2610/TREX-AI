@@ -74,7 +74,7 @@ export default function CityDetailPage() {
   const handleCompare = () => {
     if (!compareTo) return;
     const s = salary ? `&salary=${salary}` : "";
-    router.push(`/city/compare?city1=${encodeURIComponent(cityName)}&city2=${encodeURIComponent(compareTo)}${s}`);
+    router.push(`/city/analyzer?city1=${encodeURIComponent(cityName)}&city2=${encodeURIComponent(compareTo)}${s}`);
   };
 
   const suggestions = COMPARE_SUGGESTIONS[cityName] || COMPARE_SUGGESTIONS.default;
@@ -265,7 +265,7 @@ export default function CityDetailPage() {
                       key={sug}
                       onClick={() =>
                         router.push(
-                          `/city/compare?city1=${encodeURIComponent(cityName)}&city2=${encodeURIComponent(sug)}&salary=${salary}`
+                          `/city/analyzer?city1=${encodeURIComponent(cityName)}&city2=${encodeURIComponent(sug)}&salary=${salary}`
                         )
                       }
                       className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 text-sm text-gray-700 hover:text-blue-700 transition-colors group"

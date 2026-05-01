@@ -1,0 +1,1 @@
+import { initializeApp } from 'firebase/app'; import { getFirestore, collection, getDocs } from 'firebase/firestore'; const app = initializeApp({ apiKey: 'AIzaSyAEtT0dbjTKRayKTYpvOuV6hFhjEAjIo-M', projectId: 'trex-ai-8eb81' }); const db = getFirestore(app); getDocs(collection(db, 'users')).then(() => console.log('Success')).catch(e => console.error('Error:', e));

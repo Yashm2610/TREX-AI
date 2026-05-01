@@ -15,18 +15,25 @@ The name T.R.E.X stands for **Total Relocation & Employment eXpert**, symbolizin
 ## 02. Product Modules & Visuals
 
 ###  City Intelligence (Cost Analyzer)
-The City Analyzer is more than a simple calculator. It is a financial forecasting engine that evaluates 10+ Indian tech hubs based on real-world cost vectors. It answers the "What is my take-home after expenses?" question with surgical precision.
+The City Analyzer is more than a simple calculator. It is a financial forecasting engine that evaluates a **54-City Grid** of Indian tech hubs based on real-world cost vectors. It answers the "What is my take-home after expenses?" question with surgical precision.
 
 ![City Cost Analyzer](./resourcess/citycostanalyzer.png)
 *Figure 1: Comparison of multiple cities based on salary, lifestyle, and sharing preferences.*
 
 The UI provides a glassy, transparent interface to view:
 - **Rent Forecasts**: Shared vs Solo for 1BHK/2BHK.
-- **Lifestyle Buffers**: Food, utilities, and entertainment costs.
+- **Lifestyle Buffers**: Detailed local cost items spanning 9 categories with normalized price schemas.
+- **AI-Powered Side-by-Side Comparison**: Complete breakdown using Groq's LLM, presenting verdicts, salary-based affordability analysis, broker contacts, area recommendations, and dynamic moving checklists.
 - **Savings Probability**: How much you can realistically save.
 
 ![City Stress Scores](./resourcess/citycost2.png)
 *Figure 2: Visualizing Stress scores and Transport Quality across different regions.*
+
+### 🏗️ AI Resume Builder
+A dynamic resume generation engine that automatically crafts and enriches your professional profile.
+- **GitHub Enrichment**: Automatically pulls project descriptions and tech stacks from provided GitHub URLs.
+- **Streaming Generation**: Watch your resume get built and polished in real-time.
+- **AI Iterative Edits**: Refine specific sections (like Experience or Summary) with custom instructions until perfect.
 
 ### 📄 Semantic Resume AI (Senior Grade)
 Moving beyond keyword stuffing, our Resume AI acts as a **Senior Technical Recruiter + Engineering Manager**. It doesn't just scan for words; it interprets the *meaning* and *impact* of your experience.
@@ -56,7 +63,8 @@ A developmental module focused on long-term career trajectories and internship a
 ### High-Level System Design
 T.R.E.X follows a decoupled micro-service-oriented architecture designed for high-throughput AI inference.
 
-- **Frontend (Next.js 15)**: The presentation layer. Uses a **Multi-Card Reporting Engine** with severity-based logic.
+- **Frontend (Next.js 15)**: The presentation layer. Uses a **Multi-Card Reporting Engine** with severity-based logic, **Framer Motion** for animations, and **Three.js** for an interactive 3D Honeycomb background.
+- **Authentication & Database**: Utilizes **Firebase Authentication** (Google, Email/Password) and **Firebase Cloud** for secure access and analytics.
 - **API Gateway (FastAPI)**: Handles validation, entity extraction, and JD preprocessing.
 - **Core Processing Pipeline**:
     - `Resume Parser`: Robust PDF text extraction + normalization.
@@ -144,18 +152,26 @@ The AI is instructed to behave as a **Senior Technical Recruiter and Engineering
 *   **`main.py`**: Configures FastAPI and mounts routes.
 *   **`app/api/routes/resume.py`**: The main entry for file uploads.
 *   **`app/api/routes/city.py`**: Handlers for city list and comparison.
+*   **`app/api/routes/builder.py`**: API routes for streaming AI resume generation and iterative editing.
 *   **`app/services/resume_parser.py`**: PDF processing logic.
+*   **`app/services/resume_builder.py`**: Core AI logic for creating and polishing resume content.
+*   **`app/services/github_enricher.py`**: Integration for enriching project data from GitHub URLs.
 *   **`app/services/ats_checks.py`**: Rule-based screening.
 *   **`app/services/scoring.py`**: The math engine for relocation.
 *   **`app/services/llm_feedback.py`**: LangChain orchestration.
 *   **`app/services/provider_router.py`**: Switch between Groq/OpenAI.
-*   **`app/data/cities.json`**: Static database of 12+ tech hubs.
+*   **`app/data/cities.json`**: Static database of 54 Indian cities.
 
 ### **Frontend (`/frontend`)**
 *   **`src/app/resume/page.tsx`**: Dynamic resume analyzer UI.
-*   **`src/app/city/page.tsx`**: City comparison dashboard.
+*   **`src/app/city/page.tsx`**: Main city listing and search dashboard.
+*   **`src/app/city/[cityName]/page.tsx`**: Dynamic individual city details and comparison views.
 *   **`src/app/career/page.tsx`**: Experimental career tools.
+*   **`src/components/AuthModal.tsx`**: Custom-built, animated login/signup UI.
+*   **`src/components/AuthContext.tsx`**: Global Firebase Auth state management.
+*   **`src/components/ProtectedRoute.tsx`**: Auth guards for private routes.
 *   **`src/components/ui/card.tsx`**: Reusable Glassmorphism cards.
+*   **`src/lib/firebase.ts`**: Firebase SDK Initialization.
 *   **`src/lib/utils.ts`**: Tailwind specific helpers.
 *   **`tailwind.config.ts`**: Defines the project-wide design tokens.
 
@@ -264,13 +280,14 @@ A: Ensure Safari version is 15+ for full support of `backdrop-filter: blur`.
 
 ### **Current: Beta 0.1**
 - [x] Basic AI Logic.
-- [x] Static Cities.
+- [x] 54-City Grid Expansion.
 - [x] PDF Extraction.
+- [x] Full Firebase Authentication & Login Flow.
+- [x] Reactive 3D Honeycomb UI (Three.js & Framer Motion).
 
 ### **Next: Milestone 0.2**
 - [ ] Integration with External Career APIs.
 - [ ] OCR for scanned resumes.
-- [x] Client-side Authentication & Login Flow (Beta).
 
 ---
 

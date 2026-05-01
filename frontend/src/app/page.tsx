@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import HexGridBackground from "@/components/HexGridBackground";
 import CursorRipple from "@/components/CursorRipple";
 import AmbientEffects from "@/components/AmbientEffects";
-import FloatingAnalytics from "@/components/FloatingAnalytics";
 import { useAuth } from "@/components/AuthContext";
 import AuthModal from "@/components/AuthModal";
 
@@ -32,7 +31,6 @@ export default function Home() {
       <HexGridBackground />
       <AmbientEffects />
       <CursorRipple />
-      <FloatingAnalytics />
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
 
       {/* Navigation Bar */}
@@ -43,6 +41,7 @@ export default function Home() {
         <div className="hidden md:flex items-center gap-12 text-[12px] font-bold text-gray-800 drop-shadow-sm tracking-[0.2em]">
           <a href="#why" className="hover:text-blue-600 transition-colors duration-300">WHY WE EXIST</a>
           <a href="#goal" className="hover:text-blue-600 transition-colors duration-300">GOAL</a>
+          {user && <Link href="/my-resumes" className="hover:text-blue-600 transition-colors duration-300">MY RESUMES</Link>}
         </div>
         <div className="flex gap-4 items-center">
           {user ? (
@@ -105,11 +104,16 @@ export default function Home() {
 
           <motion.div 
             variants={fadeInUp}
-            className="mt-14"
+            className="mt-14 flex flex-col sm:flex-row gap-6"
           >
-            <Link href="/city">
-              <button className="btn-premium px-10 py-5 rounded-full text-lg font-medium shadow-2xl shadow-black/10">
-                Commence Analysis
+            <Link href="/resume" target="_blank" rel="noopener noreferrer">
+              <button className="btn-premium px-8 py-4 rounded-full text-lg font-medium shadow-2xl shadow-black/10">
+                Open Resume Analyzer
+              </button>
+            </Link>
+            <Link href="/city/analyzer" target="_blank" rel="noopener noreferrer">
+              <button className="btn-premium px-8 py-4 rounded-full text-lg font-medium shadow-2xl shadow-black/10">
+                Open City Analyzer
               </button>
             </Link>
           </motion.div>
@@ -146,7 +150,7 @@ export default function Home() {
               href: "/career"
             }
           ].map((feature, idx) => (
-            <Link key={idx} href={feature.href} className="group glass rounded-[2rem] p-2 flex flex-col hover:-translate-y-2 transition-all duration-500 cursor-pointer shadow-xl shadow-gray-200/50">
+            <Link key={idx} href={feature.href} target="_blank" rel="noopener noreferrer" className="group glass rounded-[2rem] p-2 flex flex-col hover:-translate-y-2 transition-all duration-500 cursor-pointer shadow-xl shadow-gray-200/50">
               <div className="p-8 pb-4 flex-1">
                 <p className="text-[11px] font-bold tracking-widest text-gray-400 uppercase mb-4 group-hover:text-blue-500 transition-colors">Module</p>
                 <h3 className="text-2xl font-semibold mb-3 text-gray-900 group-hover:text-black">{feature.title}</h3>
