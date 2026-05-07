@@ -3,12 +3,13 @@
 ![T.R.E.X Home](./resourcess/home.png)
 
 ## 01. Introduction
-**T.R.E.X** is a cutting-edge, AI-native career and relocation decision-support platform. It is engineered specifically for freshers and seasoned professionals navigating path-critical decisions in the modern tech landscape. Whether you are wondering if moving to Bangalore is worth the 50% salary hike after considering the 80% rent hike, or you are trying to understand why your resume isn't getting past the first automated screening, T.R.E.X provides the data-backed answers you need.
+**T.R.E.X** is a cutting-edge, AI-native career and relocation decision-support platform. It is engineered specifically for freshers and seasoned professionals navigating path-critical decisions in the modern tech landscape. Whether you are wondering if moving to Bangalore is worth the 50% salary hike, or you need an AI-optimized resume that beats the bots, T.R.E.X provides the data-backed answers and tools you need.
 
 ### Why T.R.E.X?
-Traditional job portals give you listings; T.R.E.X gives you **Intelligence**. We bridge the gap between "getting a job" and "building a life" by quantifying soft variables like city stress, transport quality, and semantic resume alignment. 
+Traditional job portals give you listings; T.R.E.X gives you **Intelligence**. We bridge the gap between "getting a job" and "building a life" by quantifying soft variables like city stress, transport quality, and semantic resume alignment.
 
 The name T.R.E.X stands for **Total Relocation & Employment eXpert**, symbolizing a powerful, ancient force (the dinosaur) re-engineered for the modern digital age. Just as a T-Rex dominated its ecosystem, our platform aims to dominate the career-tech space by providing unparalleled insights.
+
 
 ---
 
@@ -49,6 +50,15 @@ A developmental module focused on long-term career trajectories and internship a
 ![Career Roadmap](./resourcess/careermatchmakerbuildphase.png)
 *Figure 5: Early prototype of the Career Roadmap generator showing future path possibilities.*
 
+### 🎨 AI Resume Builder (Generative Workflow)
+A state-of-the-art generative interface that builds your resume in real-time using Server-Sent Events (SSE). It doesn't just fill templates; it synthesizes your career narrative.
+
+- **Real-time Streaming**: Watch the AI "think" and build your resume section by section.
+- **AI Refinement**: Use the "Wand" tool to refine specific sections with custom natural language instructions.
+- **Cloud Sync**: All generated resumes are automatically versioned and saved to your Firebase-backed history.
+- **Export Ready**: One-click professional PDF generation with a premium minimalist aesthetic.
+
+
 ---
 
 ## 03. Technical Architecture
@@ -56,13 +66,15 @@ A developmental module focused on long-term career trajectories and internship a
 ### High-Level System Design
 T.R.E.X follows a decoupled micro-service-oriented architecture designed for high-throughput AI inference.
 
-- **Frontend (Next.js 15)**: The presentation layer. Uses a **Multi-Card Reporting Engine** with severity-based logic.
+- **Frontend (Next.js 15)**: The presentation layer. Uses a **Multi-Card Reporting Engine** and **Resume Canvas** with real-time SSE integration.
 - **API Gateway (FastAPI)**: Handles validation, entity extraction, and JD preprocessing.
+- **Data & Persistence (Firebase)**: Firestore stores user reports and resume history, while Firebase Auth manages secure access.
 - **Core Processing Pipeline**:
     - `Resume Parser`: Robust PDF text extraction + normalization.
+    - `Resume Builder`: Multi-stage generative pipeline with iterative AI feedback.
     - `Role Preprocessor`: Structured extraction of company/role metadata.
-    - `Regex Entity Extractor`: Captures contact info and social links.
-- **AI Backend (LangChain + Groq)**: Orchestrates the **Senior Persona** prompts and parses 8-card JSON responses.
+- **AI Backend (LangChain + Groq)**: Orchestrates the **Senior Persona** prompts and parses structured JSON responses.
+
 
 ---
 
@@ -199,9 +211,32 @@ The AI is instructed to behave as a **Senior Technical Recruiter and Engineering
 }
 ```
 
+## 🚀 Local Development
+
+### 1. Backend Setup (Recommended for Windows)
+The project includes a safe-start script that prevents resource spikes and handles environment loading.
+```powershell
+# In the root directory
+powershell -ExecutionPolicy Bypass -File .\start_backend.ps1
+```
+This script automatically:
+1. Loads `.env.development` variables.
+2. Activates the Python virtual environment (`.venv`).
+3. Disables `__pycache__` creation (preventing OneDrive sync issues).
+4. Launches Uvicorn in a resource-limited mode.
+
+### 2. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
+
 ---
 
 ## 09. Advanced Deployment & DevOps
+
 
 ### **Docker Environment**
 T.R.E.X is container-ready. Use the following command to build the backend:
@@ -268,12 +303,13 @@ A: Ensure Safari version is 15+ for full support of `backdrop-filter: blur`.
 - [x] PDF Extraction.
 
 ### **Next: Milestone 0.2**
+- [x] **AI Resume Builder**: Generative SSE-based builder with manual & AI editing.
+- [x] **Firebase Integration**: Secure cloud storage for reports and resumes.
+- [x] **Report Archive**: Dedicated dashboard to access past career intelligence.
+- [x] **UI/UX Refinements**: Premium Glassmorphism layouts and responsive scaling.
 - [ ] Integration with External Career APIs.
 - [ ] OCR for scanned resumes.
-- [x] Client-side Authentication & Login Flow (Beta).
-- [x] **Firebase Integration**: Secure cloud storage for generated PDF resumes and deep analysis reports.
-- [x] **Report Archive**: Dedicated "My Resumes" dashboard to access past reports with a premium minimal modal.
-- [x] **UI/UX Refinements**: Premium dark mode layouts and improved component scaling.
+
 - [ ] **OTP-based Secure Authentication System** (Future Implementation).
 
 ### **Future: T.R.E.X Bot & Generative Contextual AI**
