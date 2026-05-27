@@ -21,6 +21,7 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/components/AuthContext";
+import Footer from "@/components/Footer";
 
 export default function RootLayout({
   children,
@@ -31,9 +32,15 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth">
       <body className="antialiased min-h-screen bg-white" suppressHydrationWarning>
         <AuthProvider>
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-1">
+              {children}
+            </div>
+            <Footer />
+          </div>
         </AuthProvider>
       </body>
     </html>
   );
 }
+
